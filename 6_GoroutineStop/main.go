@@ -98,6 +98,24 @@ func goroutineStop() {
 	}()
 
 	wg.Wait()
+
+	/*
+		Способы остановки горутины
+		Паника
+		go func(){
+			panic("")
+		}()
+
+		Фатал
+		go func(){
+			log.Fatal()
+		}()
+
+		Ретёрн
+		go func(){
+			return
+		}()
+	*/
 }
 
 func main() {

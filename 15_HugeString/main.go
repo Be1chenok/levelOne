@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 /*
 К каким негативным последствиям может привести данный фрагмент кода,
@@ -17,24 +20,30 @@ var justString string
 	  someFunc()
 	}
 
-	Этот код может привести к переполнению памяти
+	createHugeString(1 << 10) создает строку размером в 1024 элемента
+	Хотим использовать первые 100 символов
+	В примере все остальные элементы нам не нужны, но оставшиеся 924 элемента
+	не будут удалены, а сборщик мусора удалит их только тогда,
+	когда justString выйдет из области видимости
 */
 
-// Избавился от глобальной переменной, т. к. их изменение может быть неожиданным
+var justString string
 
-// Возвращает только нужную часть строки
-func someFunc() string {
+func someFunc() {
 	v := createHugeString(1 << 10)
-	return v[:100]
-
+	// Решаем проблему при помощи клонирования
+	justString = strings.Clone(v[:100])
+	fmt.Println(justString)
 }
 
 func main() {
-	// сохраняем значение в локальной переменной
-	justString := someFunc()
-	fmt.Println(justString) // Последующая работа с justString
+	someFunc()
 }
 
 func createHugeString(size int) string {
-	return ""
+	var str string
+	for i := 0; i < size; i++ {
+		str += "q"
+	}
+	return str
 }

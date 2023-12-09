@@ -9,11 +9,11 @@ import "fmt"
 
 func set(strs []string) []string {
 	// Создаем карту strsSet для хранения уникальных значений из слайса strs
-	strsSet := make(map[string]bool, len(strs))
+	strsSet := make(map[string]struct{}, len(strs))
 
 	// Записываем в карту strsSet значения из слайса strs
 	for _, str := range strs {
-		strsSet[str] = true
+		strsSet[str] = struct{}{}
 	}
 
 	// Создаем переменную result для результата

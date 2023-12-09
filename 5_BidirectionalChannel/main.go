@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
@@ -19,31 +18,22 @@ func main() {
 	timer := time.NewTimer(N) // Создаем таймер на N времени
 	ch := make(chan int)      // Создаем канал для записи и чтения данных
 
-	// Анонимная горутина для записи данных в канал
-	go func() {
-		for i := 1; ; i++ {
-			select {
-			case <-timer.C: // По истечению времени закрываем канал и выходим из цикла
-				close(ch)
-				return
-			default:
-				ch <- i                 // Записываем данные в канал
-				time.Sleep(time.Second) // Для демонстрации
-			}
-		}
-	}()
-
-	// Создаем WaitGroup
-	var wg sync.WaitGroup
-	wg.Add(1) // Добавляем в счетчик 1
 	// Анонимная горутина для чтения из канала
 	go func() {
-		defer wg.Done()        // Декрементируем счетчик в конце функции
 		for data := range ch { // Читаем значения из канала
 			fmt.Printf("read: %d\n", data) // Выводим значение
 		}
 	}()
 
-	wg.Wait() // Блокируем главную горутину пока не обнулится счетчик
-	fmt.Println("finish")
+	for i := 1; ; i++ {
+		select {
+		case <-timer.C: // По истечению времени закрываем канал и выходим из цикла
+			close(ch)
+			fmt.Println("finish")
+			return
+		default:
+			ch <- i                 // Записываем данные в канал
+			time.Sleep(time.Second) // Для демонстрации
+		}
+	}
 }
